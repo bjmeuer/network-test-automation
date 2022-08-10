@@ -79,9 +79,47 @@ def verify_vlan_to_vni_mapping(device, enable_password, vlans=None, offset=None)
         return None
     try:
         for vlan in vlans:
-            if vlan in response[0]['interfaces']['Vxlan1']['vlanToVniMap'].keys():
-                if int(response[0]['interfaces']['Vxlan1']['vlanToVniMap'][vlan]['vni']) != int(vlan) + int(offset):
+            if str(vlan) in response[0]['interfaces']['Vxlan1']['vlanToVniMap']:
+               if int(response[0]['interfaces']['Vxlan1']['vlanToVniMap'][str(vlan)]['vni']) != int(vlan) + int(offset):
                     return False
+            else:
+               return False
         return True
+    except KeyError:
+        return None
+
+def verify_vxlan_floodlist(device, enable_password, vteps=None):
+    """
+    Verifies the VTEPs are in the floodlist
+
+    Args:
+        device (jsonrpclib.jsonrpc.ServerProxy): Instance of the class jsonrpclib.jsonrpc.ServerProxy with the uri f'https://{username}:{password}@{ip}/command-api'.
+        enable_password (str): Enable password.
+        vteps (str[]): List of VTEP IPs which should be in the floodlist.
+
+    Returns:
+        bool: `True` if all VTEPs are in the floodlist (except the local one).
+        `False` otherwise.
+    """
+    if not vteps:
+        return None
+    
+    try:
+        response = device.runCmds(1, ['show vxlan vtep'], 'json')
+    except jsonrpc.AppError:
+        return None
+    try:
+        for vtep in vteps:
+            try:
+                response2 = device.runCmds(1, ['show ip interface ' + vtep], 'json')
+            except jsonrpc.AppError:
+                return None
+            if len(response2[0]['interfaces']) > 0:
+                if vtep not in response[0]['interfaces']['Vxlan1']['vteps']:
+                    return False
+        if len(vteps)-1 == len(response[0]['interfaces']['Vxlan1']['vteps']):
+            return True
+        else:
+            return False
     except KeyError:
         return None
