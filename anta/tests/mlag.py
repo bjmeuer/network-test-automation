@@ -82,7 +82,7 @@ def verify_mlag_config_sanity(device, enable_password):
     except jsonrpc.AppError:
         return None
     try:
-        if response[0]['response']['mlagActive'] is False:
+        if response[0]['mlagActive'] is False:
             # MLAG isn't running
             return None
         if len(response[0]['globalConfiguration']) > 0 or \
