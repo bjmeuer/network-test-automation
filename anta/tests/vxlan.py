@@ -54,7 +54,7 @@ def verify_vxlan_config_sanity(device, enable_password):
     except KeyError:
         return None
     
- def verify_vlan_to_vni_mapping(device, enable_password, vlans, offset):
+def verify_vlan_to_vni_mapping(device, enable_password, vlans, offset):
     """
     Verifies the vlan to vni mapping matches.
 
@@ -73,7 +73,7 @@ def verify_vxlan_config_sanity(device, enable_password):
     try:
         for vlan in vlans:
             print (response[0]['interfaces']['Vxlan1']['vlanToVniMap'].keys())
-            if vlan in response[0]['interfaces']['Vxlan1']['vlanToVniMap'].keys():
+            #if vlan in response[0]['interfaces']['Vxlan1']['vlanToVniMap'].keys():
             #if category in ['localVtep', 'mlag']:
             #    if response[0]['categories'][category]['allCheckPass'] is not True:
             #        return False
