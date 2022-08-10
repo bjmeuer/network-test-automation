@@ -85,8 +85,8 @@ def verify_mlag_config_sanity(device, enable_password):
         if response[0]['response']['mlagActive'] is False:
             # MLAG isn't running
             return None
-        if len(response[0]['response']['globalConfiguration']) > 0 or \
-            len(response[0]['response']['interfaceConfiguration']) > 0:
+        if len(response[0]['globalConfiguration']) > 0 or \
+            len(response[0]['interfaceConfiguration']) > 0:
             return False
         return True
     except KeyError:
