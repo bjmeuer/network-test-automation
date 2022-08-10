@@ -53,3 +53,30 @@ def verify_vxlan_config_sanity(device, enable_password):
         return True
     except KeyError:
         return None
+    
+ def verify_vlan_to_vni_mapping(device, enable_password, vlans, offset):
+    """
+    Verifies the vlan to vni mapping matches.
+
+    Args:
+        device (jsonrpclib.jsonrpc.ServerProxy): Instance of the class jsonrpclib.jsonrpc.ServerProxy with the uri f'https://{username}:{password}@{ip}/command-api'.
+        enable_password (str): Enable password.
+
+    Returns:
+        bool: `True` if there is no VXLAN config-sanity warnings.
+        `False` otherwise.
+    """
+    try:
+        response = device.runCmds(1, ['show interfaces vxlan 1'], 'json')
+    except jsonrpc.AppError:
+        return None
+    try:
+        for vlan in vlans:
+            print (response[0]['interfaces']['Vxlan1']['vlanToVniMap'].keys())
+            if vlan in response[0]['interfaces']['Vxlan1']['vlanToVniMap'].keys():
+            #if category in ['localVtep', 'mlag']:
+            #    if response[0]['categories'][category]['allCheckPass'] is not True:
+            #        return False
+        return True
+    except KeyError:
+        return None
