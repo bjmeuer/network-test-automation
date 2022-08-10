@@ -307,3 +307,30 @@ def verify_spanning_tree_blocked_ports(device, enable_password):
         return False
     except KeyError:
         return None
+
+def verify_interface_mtu(device, enable_password, mtu=None):
+    """
+    Verifies the interface MTU on L3 interfaces
+    Args:
+        device (jsonrpclib.jsonrpc.ServerProxy): Instance of the class jsonrpclib.jsonrpc.ServerProxy with the uri f'https://{username}:{password}@{ip}/command-api'.
+        enable_password (str): Enable password.
+        mtu (int): Minimum MTU for L3 interfaces.
+    Returns:
+        bool: `True` if all L3 interface have set at least the minimum MTU
+        `False` otherwise.
+    """
+    if not mtu:
+        return None
+    
+    try:
+        response = device.runCmds(1, ['show ip interface brief'], 'json')
+    except jsonrpc.AppError:
+        return None
+    try:
+        for interface in response[0]['interfaces']:
+            if 'Ethernet' in interface:
+                if int(response[0]['interfaces'][interface]['mtu']) < int(mtu):
+                    return False
+        return True
+    except KeyError:
+        return None
