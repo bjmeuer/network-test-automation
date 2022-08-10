@@ -114,7 +114,7 @@ def verify_vxlan_floodlist(device, enable_password, vteps=None):
                 response2 = device.runCmds(1, ['show ip interface ' + vtep], 'json')
             except jsonrpc.AppError:
                 return None
-            if len(response2[0]['interfaces']) > 0:
+            if len(response2[0]['interfaces']) == 0:
                 if vtep not in response[0]['interfaces']['Vxlan1']['vteps']:
                     return False
         if len(vteps)-1 == len(response[0]['interfaces']['Vxlan1']['vteps']):
